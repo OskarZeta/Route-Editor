@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-const WayPoint = (props) => {
+const letters = "ABCDEFGHIJ";
+
+const WayPoint = ({ index, name }) => {
   return <div>
-    {props.name}
-    {' ' +props.lat+ ' '}
-    {props.lon}
+    <span className="waypoint__text">"{name}"</span>
+    {index < 10 && <span>(point {letters.split('')[index]})</span>}
   </div>
 }
 

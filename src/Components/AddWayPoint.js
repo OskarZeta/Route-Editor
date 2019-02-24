@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 const AddWayPoint = (props) => {
   return <label onKeyUp={(e) => {
@@ -7,10 +7,11 @@ const AddWayPoint = (props) => {
       if (value.length) {
         props.addWayPoint(value);
       }
+      e.target.value = '';
     }
-  }}>
-    <span>add waypoint</span>
-    <input type="text"/>
+  }} className="actions__add-container">
+    <span className="actions__add-text">Add waypoint:</span>
+    <input className="actions__input" type="text"/>
   </label>
 }
 
