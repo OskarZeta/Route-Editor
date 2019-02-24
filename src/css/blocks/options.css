@@ -1,0 +1,32 @@
+.options {
+  position: absolute;
+  top: 17px;
+  right: 0;
+  z-index: 1;
+  background: white;
+  padding: 5px;
+}
+.options h2 {
+  font-size: 13px;
+  text-align: left;
+  margin: 3px 0;
+  padding-left: 2px;
+}
+.options__show-btn {
+  position: absolute;
+  top: -20px;
+  right: 0;
+}
+.options__list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+.options__item {
+  display: flex;
+  align-items: center;
+}
+.options__name {
+  font-size: 12px;
+  margin: 0 5px;
+}

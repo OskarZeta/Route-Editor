@@ -1,0 +1,12 @@
+.waypoint {
+  position: relative;
+  padding-right: 30px;
+}
+.waypoint__remove-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.waypoint__text {
+  word-wrap: break-word;
+}

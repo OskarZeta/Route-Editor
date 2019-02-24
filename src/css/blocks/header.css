@@ -1,0 +1,9 @@
+.header {
+  text-align: center;
+  position: relative;
+}
+.header h1 {
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 4px;
+}
