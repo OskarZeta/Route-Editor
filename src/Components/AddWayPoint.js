@@ -1,7 +1,7 @@
 import React from 'react';
 
-const AddWayPoint = (props) => {
-  return <label onKeyUp={(e) => {
+const AddWayPoint = props => {
+  return <label onKeyUp={e => {
     if (e.keyCode === 13) {
       let value = e.target.value.trim();
       if (value.length) {
@@ -9,9 +9,11 @@ const AddWayPoint = (props) => {
       }
       e.target.value = '';
     }
-  }} className="actions__add-container">
-    <span className="actions__add-text">Add waypoint:</span>
-    <input className="actions__input" type="text"/>
+  }} className="waypoints__add">
+    <span className="waypoints__add-text">Add waypoint:</span>
+    <div className="waypoints__add-input-wrapper">
+      <input className="waypoints__add-input" type="text"/>
+    </div>
   </label>
 }
 

@@ -3,10 +3,10 @@ import React from 'react';
 const RemoveWayPoint = props => {
   return (
     <button
-      onClick={() => props.removeWayPoint(props.lat, props.lon)}
+      onClick={() => props.removeWayPoint()}
       className="waypoint__remove-btn"
     >
-      <span>X</span>
+      <div className="waypoint__remove-btn-icon"></div>
     </button>
   )
 }

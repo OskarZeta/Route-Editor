@@ -4,20 +4,21 @@ import AddWayPoint from './AddWayPoint';
 import RemoveWayPoint from './RemoveWayPoint';
 import WayPoint from './WayPoint';
 import Options from './Options';
+import Spinner from './Spinner';
+import Header from './Header';
 
-const defaultCoords = {
+const defaultState = {
   lat: 55.754734,
-  lon: 37.583314
+  lon: 37.583314,
+  map: null,
+  waypoints: [],
+  routingMode: "auto",
+  crosshair: true
 };
 
 class App extends Component {
   state = {
-    ...defaultCoords,
-    map: null,
-    waypoints: [],
-    options: false,
-    routingMode: "auto",
-    crosshair: true
+    ...defaultState
   }
   createMap = settings => {
     this.setState({
@@ -136,42 +137,39 @@ class App extends Component {
     }
   }
   render() {
-    const { map, waypoints, options, crosshair } = this.state;
+    const { map, waypoints, crosshair, routingMode } = this.state;
+    //<RemoveWayPoint lat={point.lat} lon={point.lon} removeWayPoint={this.removeWayPoint}/>
     return (
       <div>
-        <header className="header">
-          <h1>route editor app</h1>
-          <div className="options">
-            <button className="options__show-btn" onClick={() => this.setState({options: !this.state.options})}>
-              OPS
-            </button>
-            {options &&
-              <Options
-                routingMode={this.state.routingMode}
-                updateRouteOptions={this.updateRouteOptions}
-                updateCrosshair={this.updateCrosshair}
-              />
+        <Header map={map}>
+          <Options
+            routingMode={routingMode}
+            crosshair={crosshair}
+            updateRouteOptions={this.updateRouteOptions}
+            updateCrosshair={this.updateCrosshair}
+          />
+        </Header>
+        <main>
+          <div className="container container--content">
+            {!map && <Spinner />}
+            <div id="map" className="map">
+              {map && crosshair && <span className="map__crosshair"></span>}
+            </div>
+            {map &&
+              <div className="waypoints">
+                <AddWayPoint addWayPoint={this.addWayPoint}/>
+                <div className="waypoints__wrapper">
+                  {waypoints.length > 0 && waypoints.map((point, i) =>
+                    <div key={i} className="waypoint">
+                      <WayPoint index={i} name={point.name} />
+                      <RemoveWayPoint removeWayPoint={() => this.removeWayPoint(point.lat, point.lon)}/>
+                    </div>
+                  )}
+                </div>
+              </div>
             }
           </div>
-        </header>
-        <div className="App">
-          {!map && <span>LOADING PLS WAIT......</span>}
-          <div id="map" className="map">
-            {map && crosshair && <span className="map__crosshair"></span>}
-          </div>
-          {map &&
-            <div className="actions">
-            <AddWayPoint addWayPoint={this.addWayPoint}/>
-            {waypoints.length > 0 &&
-              waypoints.map((point, i) =>
-                <div key={i} className="waypoint">
-                  <WayPoint index={i} name={point.name} lat={point.lat} lon={point.lon}/>
-                  <RemoveWayPoint lat={point.lat} lon={point.lon} removeWayPoint={this.removeWayPoint}/>
-                </div>
-              )}
-            </div>
-          }
-        </div>
+        </main>
       </div>
     );
   }
