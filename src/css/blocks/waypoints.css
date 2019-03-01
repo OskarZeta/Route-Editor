@@ -1,0 +1,74 @@
+.waypoints {
+  box-sizing: border-box;
+  margin: 10px auto;
+}
+.waypoints__add {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  padding: 5px;
+  background: #28a745;
+  border-radius: 2px;
+}
+.waypoints__add-text {
+  margin: 0 5px;
+  color: white;
+}
+.waypoints__add-input-wrapper {
+  width: calc(100% - 120px);
+  display: flex;
+}
+.waypoints__add-input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 1px 5px;
+  border: 1px solid white;
+  transition: 0.2s;
+}
+.waypoints__add-input:focus {
+  border-bottom: 1px solid;
+}
+
+@media (min-width: 500px) {
+  .waypoints {
+    order: 1;
+    width: 35%;
+    box-sizing: border-box;
+    padding-right: 15px;
+    margin: 0;
+  }
+  .waypoints__add {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+  }
+  .waypoints__add-text {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+  }
+  .waypoints__add-input-wrapper {
+    width: auto;
+  }
+}
+
+@media (min-width: 992px) {
+  .waypoints {
+    width: 30%;
+  }
+  .waypoints__add {
+    margin-bottom: 10px;
+  }
+  .waypoints__add-text {
+    font-size: 24px;
+  }
+  .waypoints__add-input {
+    padding: 3px 10px;
+    font-size: 18px;
+    border: 1px solid white;
+  }
+}

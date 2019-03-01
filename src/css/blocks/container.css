@@ -1,0 +1,13 @@
+.container {
+  position: relative;
+  width: 90%;
+  margin: auto;
+  padding: 10px 0;
+}
+
+@media (min-width: 500px) {
+  .container--content {
+    display: flex;
+    padding: 15px 0;
+  }
+}

@@ -1,10 +1,11 @@
 .map {
   position: relative;
-  width: 90%;
   height: 190px;
-  margin: auto;
+  border: 2px solid silver;
+  user-select: none;
+  display: flex;
+  justify-content: center;
 }
-
 .map__crosshair {
   position: absolute;
   z-index: 1;
@@ -19,16 +20,26 @@
 @media (min-width: 500px) {
   .map {
     position: relative;
-    height: 250px;
-    margin: auto;
+    height: calc(95vh - 62px);
+    margin: 0;
+    order: 2;
+    width: 65%;
+  }
+  .map__crosshair {
+    top: calc(50% - 4px);
+    left: calc(50% - 4px);
+    width: 6px;
+    height: 6px;
+    border-radius: 5px;
+    border: 1.5px solid rgb(208, 28, 87);
   }
 }
 
 @media (min-width: 992px) {
   .map {
-    position: relative;
-    height: 500px;
-    width: 85%;
-    margin: auto;
+    width: 70%;
+  }
+  .map__crosshair {
+    border: 2px solid rgb(208, 28, 87);
   }
 }

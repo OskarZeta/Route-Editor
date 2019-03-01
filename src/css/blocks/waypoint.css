@@ -2,11 +2,73 @@
   position: relative;
   padding-right: 30px;
 }
+.waypoint__wrapper {
+  padding: 2px 2px 4px 2px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
 .waypoint__remove-btn {
   position: absolute;
   top: 0;
   right: 0;
+  width: 20px;
+  height: 20px;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: #dc3545;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.waypoint__remove-btn:hover {
+  background: #bd2d3b;
+}
+.waypoint__remove-btn:active {
+  opacity: 0.7;
+}
+.waypoint__remove-btn-icon {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.waypoint__remove-btn-icon::before, .waypoint__remove-btn-icon::after {
+  display: block;
+  position: absolute;
+  width: 1.05em;
+  height: 2px;
+  background: white;
+  content: "";
+  top: 9px;
+  left: 3px;
+}
+.waypoint__remove-btn-icon::before {
+  transform: rotate(45deg);
+}
+.waypoint__remove-btn-icon::after {
+  transform: rotate(-45deg);
 }
 .waypoint__text {
   word-wrap: break-word;
+}
+
+@media (min-width: 992px) {
+  .waypoint {
+    padding-right: 40px;
+  }
+  .waypoint__wrapper {
+    padding: 5px 5px 10px 5px;
+    border-bottom: 1.5px solid rgba(0, 0, 0, 0.2);
+    font-size: 18px;
+  }
+  .waypoint__remove-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+  }
+  .waypoint__remove-btn-icon::before, .waypoint__remove-btn-icon::after {
+    width: 24px;
+    height: 3px;
+    top: 13px;
+    left: 3px;
+  }
 }
