@@ -20,12 +20,12 @@ class App extends Component {
   state = {
     ...defaultState
   }
-  createMap = settings => {
+  createMap(settings) {
     this.setState({
       map: new this.state.ymaps.Map('map', settings)
     });
   }
-  createRoute = () => {
+  createRoute() {
     this.setState({
       route: new this.state.ymaps.multiRouter.MultiRoute({
         referencePoints: this.state.waypoints.map(point => [point.lat, point.lon]),
@@ -37,25 +37,31 @@ class App extends Component {
         boundsAutoApply: true
       })
     }, () => {
-      this.state.route.editor.start({
+      const { route, ymaps } = this.state;
+      route.editor.start({
         dragWayPoints: true,
         dragViaPoints: false,
         removeViaPoints: false,
         addMidPoints: false
       });
-      this.state.route.editor.events.add('waypointdragend', () => {
-        let points = this.state.route.model.properties._data.waypoints;
+      route.editor.events.add('waypointdragend', (e) => {
+        const { index, coordinates } = e.get("wayPoint").model.properties._data;
+        let waypoints = this.state.waypoints.slice(0);
+        waypoints[index] = {
+          name : waypoints[index].name,
+          lat : coordinates[1],
+          lon : coordinates[0]
+        }
         this.setState({
-          waypoints: this.state.waypoints.map((point, i) => {
-            if (point.lat !== points[i].coordinates[1] || point.lon !== points[i].coordinates[0]) {
-              return {
-                name : point.name,
-                lat : points[i].coordinates[1],
-                lon : points[i].coordinates[0]
-              }
-            }
-            return point;
-          })
+          waypoints
+        });
+      });
+      route.events.add("update", () => {
+        route.getWayPoints().each((waypoint, i) => {
+          ymaps.geoObject.addon.balloon.get(waypoint);
+          waypoint.properties.set({
+            balloonContent: this.state.waypoints[i].name
+          });
         });
       });
     });
@@ -86,9 +92,9 @@ class App extends Component {
       )
     });
   }
-  updateCrosshair = val => {
+  updateCrosshair = value => {
     this.setState({
-      crosshair: val
+      crosshair: value
     });
   }
   componentDidMount() {
@@ -138,7 +144,6 @@ class App extends Component {
   }
   render() {
     const { map, waypoints, crosshair, routingMode } = this.state;
-    //<RemoveWayPoint lat={point.lat} lon={point.lon} removeWayPoint={this.removeWayPoint}/>
     return (
       <div>
         <Header map={map}>
