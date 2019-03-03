@@ -56,7 +56,7 @@ class App extends Component {
           waypoints
         });
       });
-      route.events.add("update", () => {
+      route.events.add("click", () => {
         route.getWayPoints().each((waypoint, i) => {
           ymaps.geoObject.addon.balloon.get(waypoint);
           waypoint.properties.set({
