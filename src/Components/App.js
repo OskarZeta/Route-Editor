@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import ymaps from 'ymaps';
 import AddWayPoint from './AddWayPoint';
-import RemoveWayPoint from './RemoveWayPoint';
-import WayPoint from './WayPoint';
+import WayPointsContainer from './WayPointsContainer';
 import Options from './Options';
 import Spinner from './Spinner';
 import Header from './Header';
@@ -17,13 +16,37 @@ const defaultState = {
 };
 
 class App extends Component {
-  state = {
-    ...defaultState
+  state = { ...defaultState }
+  wayPointDragHandler(e) {
+    const { index, coordinates } = e.get("wayPoint").model.properties._data;
+    let waypoints = this.state.waypoints.slice(0);
+    waypoints[index] = {
+      name : waypoints[index].name,
+      lat : coordinates[1],
+      lon : coordinates[0]
+    }
+    this.setState({ waypoints });
+  }
+  balloonHandler() {
+    const { route, ymaps, waypoints } = this.state;
+    route.getWayPoints().each((waypoint, i) => {
+      let lat = waypoint.properties.getAll().coordinates[1];
+      let lon = waypoint.properties.getAll().coordinates[0];
+      ymaps.geoObject.addon.balloon.get(waypoint);
+      waypoint.properties.set({
+        balloonContent: waypoints[i].name
+      });
+      let geoCoder = ymaps.geocode([lat, lon]);
+      geoCoder.then(res => {
+        ymaps.geoObject.addon.balloon.get(waypoint);
+        waypoint.properties.set({
+          balloonContent: waypoints[i].name + '<br>' + res.geoObjects.get(0).getAddressLine()
+        });
+      });
+    });
   }
   createMap(settings) {
-    this.setState({
-      map: new this.state.ymaps.Map('map', settings)
-    });
+    this.setState({ map: new this.state.ymaps.Map('map', settings) });
   }
   createRoute() {
     this.setState({
@@ -33,48 +56,26 @@ class App extends Component {
           results: 2,
           routingMode: this.state.routingMode
         }
-      }, {
-        boundsAutoApply: true
-      })
+      }, { boundsAutoApply: true })
     }, () => {
-      const { route, ymaps } = this.state;
-      route.editor.start({
+      this.state.route.editor.start({
         dragWayPoints: true,
         dragViaPoints: false,
         removeViaPoints: false,
         addMidPoints: false
       });
-      route.editor.events.add('waypointdragend', (e) => {
-        const { index, coordinates } = e.get("wayPoint").model.properties._data;
-        let waypoints = this.state.waypoints.slice(0);
-        waypoints[index] = {
-          name : waypoints[index].name,
-          lat : coordinates[1],
-          lon : coordinates[0]
-        }
-        this.setState({
-          waypoints
-        });
-      });
-      route.events.add("click", () => {
-        route.getWayPoints().each((waypoint, i) => {
-          ymaps.geoObject.addon.balloon.get(waypoint);
-          waypoint.properties.set({
-            balloonContent: this.state.waypoints[i].name
-          });
-        });
-      });
+      this.state.route.editor.events.add('waypointdragend', e => this.wayPointDragHandler(e));
+      this.state.route.events.add("click", () => this.balloonHandler());
     });
   }
   updateRoute = () => {
+    this.state.map.balloon.close();
     this.state.route.model.setReferencePoints(
       this.state.waypoints.map(point => [point.lat, point.lon])
     );
   }
   updateRouteOptions = value => {
-    this.setState({
-      routingMode: value
-    });
+    this.setState({ routingMode: value });
   }
   addWayPoint = name => {
     this.setState({
@@ -85,6 +86,13 @@ class App extends Component {
       })
     });
   }
+  changeWayPoints = (val1, val2) => {
+    if (+val1 !== +val2) {
+      let waypoints = this.state.waypoints.slice(0);
+      [ waypoints[val1], waypoints[val2] ] = [ waypoints[val2], waypoints[val1] ];
+      this.setState({ waypoints });
+    }
+  }
   removeWayPoint = (lat, lon) => {
     this.setState({
       waypoints: this.state.waypoints.filter(point =>
@@ -92,43 +100,28 @@ class App extends Component {
       )
     });
   }
-  updateCrosshair = value => {
-    this.setState({
-      crosshair: value
-    });
-  }
+  updateCrosshair = value => this.setState({ crosshair: value })
   componentDidMount() {
     ymaps.load('https://api-maps.yandex.ru/2.1/?apikey=ea6dba4a-0251-4ffa-a9a4-bcb0e00e4732&lang=ru_RU')
-      .then(ymaps => this.setState({
-        ymaps
-      }));
+      .then(ymaps => this.setState({ ymaps }));
   }
   componentDidUpdate(_, prevState) {
     if (this.state.ymaps !== prevState.ymaps) {
-      const { ymaps, lat, lon } = this.state;
-      navigator.geolocation.getCurrentPosition(
-        () => {
-          ymaps.geolocation.get().then(res => {
-            this.createMap({
-              center: [res.geoObjects.position[0], res.geoObjects.position[1]],
-              zoom: 10
-            });
-          }, e => {
-            console.log(e);
-            this.createMap({
-              center: [lat, lon],
-              zoom: 10
-            });
-          })
-        },
-        e => {
-          console.log(e.message);
+      const { lat, lon } = this.state;
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(pos => {
           this.createMap({
-            center: [lat, lon],
+            center: [pos.coords.latitude, pos.coords.longitude],
             zoom: 10
-          })
-        }
-      );
+          });
+        }, e => {
+          console.log(e.message);
+          this.createMap({ center: [lat, lon], zoom: 10 });
+        });
+      } else {
+        console.log("Geolocation is unavailable");
+        this.createMap({ center: [lat, lon], zoom: 10 });
+      }
     }
     if (this.state.waypoints !== prevState.waypoints) {
       this.state.route ? this.updateRoute() : this.createRoute();
@@ -147,9 +140,7 @@ class App extends Component {
     return (
       <div>
         <Header map={map}>
-          <Options
-            routingMode={routingMode}
-            crosshair={crosshair}
+          <Options routingMode={routingMode} crosshair={crosshair}
             updateRouteOptions={this.updateRouteOptions}
             updateCrosshair={this.updateCrosshair}
           />
@@ -160,19 +151,13 @@ class App extends Component {
             <div id="map" className="map">
               {map && crosshair && <span className="map__crosshair"></span>}
             </div>
-            {map &&
-              <div className="waypoints">
-                <AddWayPoint addWayPoint={this.addWayPoint}/>
-                <div className="waypoints__wrapper">
-                  {waypoints.length > 0 && waypoints.map((point, i) =>
-                    <div key={i} className="waypoint">
-                      <WayPoint index={i} name={point.name} />
-                      <RemoveWayPoint removeWayPoint={() => this.removeWayPoint(point.lat, point.lon)}/>
-                    </div>
-                  )}
-                </div>
-              </div>
-            }
+            {map && <div className="waypoints">
+              <AddWayPoint addWayPoint={this.addWayPoint}/>
+              <WayPointsContainer waypoints={waypoints}
+                removeWayPoint={this.removeWayPoint}
+                changeWayPoints={this.changeWayPoints}
+              />
+            </div>}
           </div>
         </main>
       </div>

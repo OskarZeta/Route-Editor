@@ -5,6 +5,21 @@
 .waypoint__wrapper {
   padding: 2px 2px 4px 2px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -khtml-user-drag: element;
+  -webkit-user-drag: element;
+  cursor: pointer;
+  transition: 0.3s;
+  background: white;
+}
+.waypoint__wrapper:hover {
+  background: rgba(0, 0, 0, 0.15);
+}
+.waypoint__wrapper:active {
+  background: rgba(0, 0, 0, 0.1);
 }
 .waypoint__remove-btn {
   position: absolute;
