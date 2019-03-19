@@ -1,8 +1,5 @@
 import React from 'react';
 
-//const letters = "ABCDEFGHIJ";
-//{index < 10 && <span> (point {letters.split('')[index]})</span>}
-
 const WayPoint = ({ index, name, changeWayPoints }) => {
   const onDragStart = e => {
     e.dataTransfer.setData("index", index);
